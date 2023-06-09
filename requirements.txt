@@ -1,5 +1,4 @@
-requests
-json
-pygsheets
-pandas
-argparse
+requests==2.28.2
+pygsheets==2.0.6
+pandas==2.0.1
+argparse==1.4.0
