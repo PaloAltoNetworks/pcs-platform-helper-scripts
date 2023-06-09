@@ -5,19 +5,21 @@ Some helper scripts for Prisma Cloud Platform
 
 ## Description
 
-Script to help find polices that are not attached to alert rules. 
+Script to help find polices that are not attached to alert rules. If there is an alert rules that includes all policies then this script would not be effective. 
+
+
 
 ## Installation
 
-`
+```
 python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
-`
+```
 
 ## Executing Script
 
-Must use the `-c` option the first time to pull down all the policies data. This will store the policy data in a file called `policy.json`
+Must use the `-c` option the first time to pull down all the policy data. This will store the policy data locally in a file called `policy.json`
 
 `policy.json `is the default, but can be defined with the `-f` flag
 
