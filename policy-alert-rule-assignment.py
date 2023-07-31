@@ -7,7 +7,7 @@ import pygsheets
 import os
 
 #If you want to send results to Google Sheets
-googleSheetsTitle = "Customer - Missing Policies"
+googleSheetsTitle = "Customer - Alert Rule Policies"
 googleSheetsAuthFile = "google-sheets.json"
 
 argParser = argparse.ArgumentParser()
@@ -17,6 +17,7 @@ argParser.add_argument("-c", "--cache", action='store_true', help="Cache Results
 argParser.add_argument("-x", "--config", action='store', help="Authorization - Config File (~/.prismacloud)",required=True)
 argParser.add_argument("-g", "--google", action='store_true', help="Send Results to Google sheets")
 
+
 args = argParser.parse_args()
 
 if (args.google is True):
@@ -24,11 +25,10 @@ if (args.google is True):
     sh = gc.open(googleSheetsTitle)
 
 configfile = os.path.join(os.path.expanduser('~/.prismacloud'),args.config)
-if(args.verbose is True):print("Auth Config File >",configfile)
-
 
 #Verify that authorization file exists and load into memory
 if(args.verbose is True):print("Checking if auth config file exists")
+if(args.verbose is True):print("Auth Config File >",args.config)
 if(os.path.isfile(configfile)):
     if(args.verbose is True):print("Auth config file exists")
     f = open(configfile,"r")
@@ -43,6 +43,7 @@ if(os.path.isfile(configfile)):
 else:
     if(args.verbose is True):print("Auth config does not file exists")
     exit();
+
 
 payload = {
     'username':access_key,
@@ -107,32 +108,26 @@ if(args.verbose is True):print("Status code",response.status_code)
 if(args.verbose is True):print("Response Data",response.text)
 
 
+
+
+
 #Create list of policies from alert rule(s)
 alert_rule_policies = []
-for i in json.loads(response.text):
+#for each alert rule
+for i in json.loads(response.text): 
+    if(args.verbose is True):print("Alert Rule", i['name'], "Number of Policies [",len(i['policies']),"]")
+    #for each policy in the alert rule
     for p in i['policies']:
-        alert_rule_policies.append(p)
-
-if(args.verbose is True):print("Number of policies in alert rules",len(alert_rule_policies))
-
-data=[]
-#Start the match process
-if(args.verbose is True):print("Start on matching logic")
-for i in policy_ids:
-    match = False
-    for v in alert_rule_policies:
-        if i in v:
-            match = True
-    if match == False:
+        #loop over all policies and find the matching metadata
         for x in policy_items:
-            if i == x['policyId']:
-                list = [x['policyId'],x['severity'],x['cloudType'],x['policyType'],x['name']]
-                data.append(list)
+            if p == x['policyId']:
+                list = [i['name'],x['policyId'],x['severity'],x['cloudType'],x['policyType'],x['name']]
+                alert_rule_policies.append(list)
 
-df = pd.DataFrame(data,columns = ["policyId","Severity","cloudType","policyType","PolicyName"])
 
-df.sort_values(by=['Severity'],ascending=True,inplace=True)
+df = pd.DataFrame(alert_rule_policies,columns = ["AlertRuleName","policyId","Severity","cloudType","policyType","PolicyName"])
 print(df)
+
 
 #Sending Data to Google Sheets
 if (args.google is True):
