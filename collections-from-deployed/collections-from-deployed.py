@@ -137,7 +137,7 @@ for c in collection:
 
     if(args.verbose is True):print(collection_data)
 
-    requests.post(api_endpoint+"/api/v1/collections", headers=auth_headers, json=collection_data, verify=CA_CERT)
+    #requests.post(api_endpoint+"/api/v1/collections", headers=auth_headers, json=collection_data, verify=CA_CERT)
 
 
 print("Exit Script")
