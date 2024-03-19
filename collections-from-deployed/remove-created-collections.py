@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # python3 -m venv env
 # source env/bin/activate
 # pip install requests pprintpp
@@ -9,8 +11,9 @@ import os
 import urllib.parse
 import sys
 
-sys.path.append(os.path.expanduser("~/repos/pcs-platform-helper-scripts"))
-from utilities.main import *
+current_dir = os.path.dirname(__file__)
+sys.path.append(os.path.abspath(os.path.join(current_dir, '..', 'utilities')))
+from pc_auth import *
 
 argParser = argparse.ArgumentParser()
 argParser.add_argument("-v", "--verbose", action='store_true', help="Print Verbose Messages")
