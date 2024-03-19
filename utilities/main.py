@@ -72,8 +72,10 @@ def connect(config_file):
         'Accept': 'application/json'
     }
 
+    r.update({"platform_headers":platform_headers})
+
     try:
-        r.update({"twistlockUrl":requests.get(r["api_url"]+"/compute/config", headers=platform_headers, verify=ca_cert).json()["twistlockUrl"]})
+        r.update({"twistlockUrl":requests.get(r["api_url"]+"/compute/config", headers=r["platform_headers"], verify=ca_cert).json()["twistlockUrl"]})
     except: 
         return "Failed to GET the compute/config settings"
     
@@ -82,5 +84,11 @@ def connect(config_file):
     except:
         return "Failed to authenticate with the CWP console"    
     
+    cwp_headers = {
+        'Authorization': 'Bearer '+ r["CWP_token"],
+        'Accept': 'application/json'
+    }
+
+    r.update({"cwp_headers":cwp_headers})
 
     return(r)

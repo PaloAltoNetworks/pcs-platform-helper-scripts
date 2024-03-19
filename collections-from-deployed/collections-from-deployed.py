@@ -7,6 +7,11 @@ import pprint
 import json
 import argparse
 import os
+import sys
+
+
+sys.path.append(os.path.expanduser("~/repos/pcs-platform-helper-scripts"))
+from utilities.main import *
 
 argParser = argparse.ArgumentParser()
 argParser.add_argument("-v", "--verbose", action='store_true', help="Print Verbose Messages")
@@ -18,48 +23,12 @@ argParser.add_argument("-x", "--config", action='store', help="Authorization - C
 args = argParser.parse_args()
 
 pp = pprint.PrettyPrinter(indent=4)
-CA_CERT = '/Users/sgordon/globalprotect_certifi.txt'
 
 config_file = os.path.join(os.path.expanduser('~/.prismacloud'),args.config)
 if(args.verbose is True):print("Auth Config File >",config_file)
+pc = connect(config_file)
 
-
-# Verify that authorization file exists and load into memory
-# This block of code is checking if the authorization config file exists.
-
-if(args.verbose is True):print("Checking if auth config file exists")
-if(os.path.isfile(config_file)):
-    if(args.verbose is True):print("Auth config file exists")
-    f = open(config_file,"r")
-    config_items = json.loads(f.read())
-    f.close()
-    if(args.verbose is True):print("API URL",config_items['url'])
-    api_endpoint = "https://"+config_items['url']
-    if(args.verbose is True):print("Access Key",config_items['identity'])
-    access_key = config_items['identity']
-    if(args.verbose is True):print("Secret Key","*********")
-    secret_key = config_items['secret']
-else:
-    if(args.verbose is True):print("Auth config does not file exists")
-    exit();
-
-
-user_auth = {
-    'username':access_key,
-    'password':secret_key
-}
-
-#Generate a Token for access to Prisma Cloud CSWP.
-print("Start Authentication")
-TOKEN = requests.post(api_endpoint+"/api/v1/authenticate", json=user_auth, verify=CA_CERT).json()['token']
-if(args.verbose is True):print("TOKEN", TOKEN)
-if(args.verbose is True):print("End Authentication")
-
-#Set Prisma Cloud Headers for Login with token
-auth_headers = {
-    'Authorization': 'Bearer '+TOKEN,
-    'Accept': 'application/json'
-}
+#pp.pprint(pc)
 
 #Looping Defaults
 limit = 50
@@ -81,7 +50,7 @@ if args.cache:
             'compact':True
         }
         
-        response = requests.get(api_endpoint+"/api/v1/images", headers=auth_headers, params=payload, verify=CA_CERT)
+        response = requests.get(pc["twistlockUrl"]+"/api/v1/images", headers=pc["cwp_headers"], verify=pc["ca_cert"])
         if(args.verbose is True):print("Status code",response.status_code)
         if(args.verbose is True):print("Response Data",response.text)
 
@@ -109,8 +78,6 @@ f = open(args.file,"r")
 items = json.loads(f.read())
 if(args.verbose is True):print("Total Records in Cache: ",len(items))    
 
-
-
 collection = []
 
 for item in items:
@@ -137,7 +104,8 @@ for c in collection:
 
     if(args.verbose is True):print(collection_data)
 
-    #requests.post(api_endpoint+"/api/v1/collections", headers=auth_headers, json=collection_data, verify=CA_CERT)
 
+
+    requests.post(pc["twistlockUrl"]+"/api/v1/collections", headers=pc["cwp_headers"], json=collection_data, verify=pc["ca_cert"])
 
 print("Exit Script")
