@@ -1,3 +1,5 @@
 env
 *.json
 .DS*
+*.pyc
+__pycache__
