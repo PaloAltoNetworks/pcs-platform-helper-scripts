@@ -10,6 +10,8 @@ import json
 import argparse
 import os
 import sys
+from datetime import datetime, timedelta
+import pytz
 
 current_dir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(current_dir, '..', 'utilities')))
@@ -45,11 +47,12 @@ if args.cache:
         print("Delete Cache File", args.file)
         os.remove(args.file)
 
+
     while True:
 
         payload = {'limit':limit,'offset':offset,'compact':True}
         
-        response = requests.get(pc["twistlockUrl"]+"/api/v1/images", headers=pc["cwp_headers"], params=payload, verify=pc["ca_cert"],)
+        response = requests.get(pc["twistlockUrl"]+"/api/v1/hosts", headers=pc["cwp_headers"], params=payload, verify=pc["ca_cert"],)
         if(args.verbose is True):print("Offset & Limit ",offset, limit)
         if(args.verbose is True):print("Status Code ",response.status_code)
         totalRecords = int(response.headers['Total-Count'])
@@ -68,7 +71,6 @@ if args.cache:
                 if(args.verbose is True):print("Loading Records", "."*int((offset/limit) )) 
 
 
-
     if(args.verbose is True):print("Cache Rebuilt - Saving to File", args.file)
     with open(args.file, 'w') as file:
         json.dump(pulled_items, file, indent=3)
@@ -80,34 +82,28 @@ with open(args.file, 'r') as file:
     items = json.load(file)
 if(args.verbose is True):print("Total Records in Cache: ",len(items))    
 
+
 collection = []
-
-for item in items:
-   for h in item["hosts"]:
-        
-        if "cluster" in item["hosts"][h] and "namespaces" in item["hosts"][h]:
-            cluster = item["hosts"][h]["cluster"]
-            namespace = item["hosts"][h]["namespaces"][0]
-            #if(args.verbose is True):print("Cluster={};Namespace={};".format(cluster,namespace))
-            collection_item = [cluster,namespace]
-            if collection_item not in collection:
-                collection.append(collection_item)
-
-print("Number of collections to create",len(collection))
-
-for c in collection:
-
-    collection_data = {
-    'name':"NS - "+c[0]+" - "+c[1],
-    'description':"NS - "+c[0]+" - "+c[1],
-    'clusters':[c[0]],
-    'namespaces':[c[1]]
-    }
-
-    if(args.verbose is True):print(collection_data)
+count=0
 
 
+utc_time = datetime.now(pytz.utc)
 
-    requests.post(pc["twistlockUrl"]+"/api/v1/collections", headers=pc["cwp_headers"], json=collection_data, verify=pc["ca_cert"])
+central_timezone = pytz.timezone('US/Central')
+current_datetime = datetime.now()
+one_hour_ago = timedelta(minutes=10)
+one_hour_ago_datetime = current_datetime - one_hour_ago
+
+print("Current time: "+str(current_datetime))
+
+for h in items:
+
+    datetime_obj = datetime.strptime(h["scanTime"], '%Y-%m-%dT%H:%M:%S.%fZ')
+    if datetime_obj > one_hour_ago_datetime:
+        #print(h["scanTime"]+" --- "+h["hostname"])
+        print(datetime_obj.replace(tzinfo=pytz.utc).astimezone(central_timezone))
+        count+=1
+
+print("Total Records "+str(count))
 
 print("Exit Script")
