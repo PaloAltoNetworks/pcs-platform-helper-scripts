@@ -33,46 +33,11 @@ pc = connect(config_file)
 #pp.pprint(pc)
 
 #Looping Defaults
-limit = 50
-offset = 0
 items = []
-pulled_items = []
-
 
 if args.cache:
-    print("Rebuilding Cache")
-    if os.path.exists(args.file):
-        print("Delete Cache File", args.file)
-        os.remove(args.file)
+    items = create_cache(pc,args,"/api/v1/hosts")
 
-    while True:
-
-        payload = {'limit':limit,'offset':offset,'compact':True}
-        
-        response = requests.get(pc["twistlockUrl"]+"/api/v1/images", headers=pc["cwp_headers"], params=payload, verify=pc["ca_cert"],)
-        if(args.verbose is True):print("Offset & Limit ",offset, limit)
-        if(args.verbose is True):print("Status Code ",response.status_code)
-        totalRecords = int(response.headers['Total-Count'])
-        if(args.verbose is True):print("Total Records ", str(totalRecords))
-
-        if response.status_code == 200:
-            results = response.json()
-            if(args.verbose is True):print("Results ", len(results))
-            pulled_items += results
-            
-
-            if len(pulled_items) >= totalRecords:
-                break
-            else:    
-                offset=offset+limit
-                if(args.verbose is True):print("Loading Records", "."*int((offset/limit) )) 
-
-
-
-    if(args.verbose is True):print("Cache Rebuilt - Saving to File", args.file)
-    with open(args.file, 'w') as file:
-        json.dump(pulled_items, file, indent=3)
-    if(args.verbose is True):print("Finished writing to cache file")
 
 #If Cache, then use file to query
 print("Read from cache file", args.file)
