@@ -5,7 +5,7 @@ import os
 
 
 
-def create_cache(pc,args,endpoint):
+def create_cache(pc,args,endpoint,extra_params=None):
 
     limit = 50
     offset = 0
@@ -19,6 +19,8 @@ def create_cache(pc,args,endpoint):
     while True:
 
         payload = {'limit':limit,'offset':offset,'compact':True}
+        if extra_params is not None:
+            payload.update(extra_params)
         
         response = requests.get(pc["twistlockUrl"]+endpoint, headers=pc["cwp_headers"], params=payload, verify=pc["ca_cert"],)
         if(args.verbose is True):print("Offset & Limit ",offset, limit)
