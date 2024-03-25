@@ -27,7 +27,8 @@ argParser.add_argument("-x", "--config", action='store', help="Authorization - C
 argParser.add_argument("-o", "--org", action='store', help="What is the organization account ID ",required=True)
 #argParser.add_argument("-a", "--account", action='store', help="Account ID ")
 argParser.add_argument("-t", "--type", choices=['aws', 'azure', 'gcp'], help="Which cloud Type?",required=True)
-argParser.add_argument("-s", "--agentless", choices=['enabled', 'disabled'], help="Enable or Disable?",required=True)
+argParser.add_argument("-f", "--feature", choices=['agentless','serverless'], help="Which cloud Scanning Feature",required=True)
+argParser.add_argument("-s", "--status", choices=['enabled', 'disabled'], help="Enable or Disable?",required=True)
 
 args = argParser.parse_args()
 
@@ -50,8 +51,12 @@ if args.org is not None:
         if a["accountId"] != org_id:
             members.append(a["accountId"])
 
+    if args.feature == 'agentless':
+        feature = "Agentless Scanning"
+    else:
+        feature = "Serverless Function Scanning"
 
-    payload = {"memberIds":members,"features":[{"name":"Agentless Scanning","state":args.agentless}]}
+    payload = {"memberIds":members,"features":[{"name":feature,"state":args.status}]}
 
 
     pc_request(auth=pc,method="put",url=pc["api_url"]+"/cas/api/v1/org/"+org_id+"/features",platform=True,verbose=args.verbose,payload=payload)
