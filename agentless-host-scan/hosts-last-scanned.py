@@ -31,7 +31,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 config_file = os.path.join(os.path.expanduser('~/.prismacloud'),args.config)
 if(args.verbose is True):print("Auth Config File >",config_file)
-pc = connect(config_file)
+pc = json.loads(connect(config_file))
 
 #pp.pprint(pc)
 

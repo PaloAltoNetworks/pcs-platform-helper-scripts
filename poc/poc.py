@@ -23,11 +23,11 @@ from pc_auth import *
 config_file = os.path.join(os.path.expanduser("~/.prismacloud/credentials.json"))
 
 
-my_pc = connect(config_file)
+pc = json.loads(connect(config_file))
 
 
-pp.pprint(my_pc)
-
+#pp.pprint(my_pc)
+print(my_pc)
 
 #response = requests.get(my_pc["twistlockUrl"]+"/api/v1/images", headers=my_pc["cwp_headers"], verify=my_pc["ca_cert"]).json()
 
