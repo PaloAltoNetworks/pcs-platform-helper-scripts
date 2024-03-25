@@ -26,6 +26,8 @@ def pc_request(**kwargs):
 
     if kwargs["platform"] is True:
         headers = kwargs["auth"]["platform_headers"]
+    else:
+        headers = kwargs["auth"]["cwp_headers"] 
 
     if kwargs["method"] == "get":
 
