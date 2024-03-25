@@ -24,8 +24,8 @@ argParser.add_argument("-v", "--verbose", action='store_true', help="Print Verbo
 #argParser.add_argument("-f", "--file", default="policy.json", help="Define Cache File")
 #argParser.add_argument("-c", "--cache", action='store_true', help="Cache Results")
 argParser.add_argument("-x", "--config", action='store', help="Authorization - Config File (~/.prismacloud)",required=True)
-argParser.add_argument("-o", "--org", action='store', help="What is the organization account ID ")
-argParser.add_argument("-a", "--account", action='store', help="Account ID ")
+argParser.add_argument("-o", "--org", action='store', help="What is the organization account ID ",required=True)
+#argParser.add_argument("-a", "--account", action='store', help="Account ID ")
 argParser.add_argument("-t", "--type", choices=['aws', 'azure', 'gcp'], help="Which cloud Type?",required=True)
 argParser.add_argument("-s", "--agentless", choices=['enabled', 'disabled'], help="Enable or Disable?",required=True)
 
