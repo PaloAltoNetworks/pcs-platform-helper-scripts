@@ -48,7 +48,7 @@ if args.org is not None:
     members=[]
 
     for a in response:
-        if a["accountId"] != org_id:
+        if a["accountId"] != org_id and "::" not in a["accountId"]:
             members.append(a["accountId"])
 
     if args.feature == 'agentless':
