@@ -23,7 +23,9 @@ def connect(config_file):
         config_items = json.loads(f.read())
         f.close()
         r.update(config_items)
-    except:
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        
         a = """
     {   
     "ca_cert"  : "", #(Optional)
@@ -64,7 +66,8 @@ def connect(config_file):
 
     try:
         r.update({"platform_token":requests.post(r["api_url"]+"/login", json=user_auth, verify=ca_cert).json()["token"]})
-    except:
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
         return "Failed to authenticate to the platform" 
 
     platform_headers = {
@@ -76,12 +79,14 @@ def connect(config_file):
 
     try:
         r.update({"twistlockUrl":requests.get(r["api_url"]+"/compute/config", headers=r["platform_headers"], verify=ca_cert).json()["twistlockUrl"]})
-    except: 
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
         return "Failed to GET the compute/config settings"
     
     try:
         r.update({"CWP_token":requests.post(r["twistlockUrl"]+"/api/v1/authenticate", json=user_auth, verify=ca_cert).json()["token"]})
-    except:
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
         return "Failed to authenticate with the CWP console"    
     
     cwp_headers = {
