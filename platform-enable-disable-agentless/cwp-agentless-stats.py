@@ -33,6 +33,7 @@ config_file = os.path.join(os.path.expanduser('~/.prismacloud'),args.config)
 if(args.verbose is True):print("Auth Config File >",config_file)
 pc = json.loads(connect(config_file))
 
+if(args.verbose is True):print(pc)
 
 #Looping Defaults
 items = []
@@ -60,20 +61,24 @@ recent_items = []
 for index, i in enumerate(items):
     scanTime = items[index]["scanTime"]
     date_object = datetime.strptime(scanTime[0:18], '%Y-%m-%dT%H:%M:%S')
-    if date_object > last_hour_date_time:
-        recent_items.append(i)
+    #if date_object > last_hour_date_time:
+    recent_items.append(i)
 
-print(f"Number of Scans {len(recent_items)} since {last_hour_date_time.strftime('%Y-%m-%d %H:%M:%S')}")
+#print(f"Number of Scans {len(recent_items)} since {last_hour_date_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 
 total=0
-status = ["Pending","Timeout","Scanned","Permissions","Unsupported","Marketplace","Excluded","Quota"]
+status = ["Pending","Timeout","Scanned","Permissions","Unsupported","Marketplace","Excluded","Quota","Networking","Internal","Scanned by Defender"]
 for s in status:
     matching_records_count = sum(1 for record in recent_items if record.get('category') == s)
     print(f"Status: {s}: {matching_records_count}")
     total += matching_records_count
 
 print(f"Total: {total} {len(recent_items)-total}")
+
+# for i in recent_items:
+#     if i['category'] not in status:
+#         print(i['category'])
 
 
 if(args.verbose is True):print("Exit Script")
