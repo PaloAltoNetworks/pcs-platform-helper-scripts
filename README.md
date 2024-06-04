@@ -17,6 +17,19 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
+## Configuration
+
+Create an authorization file in the directory `~/.prismacloud`  Below is the syntax of the file:
+
+```
+{
+    "ca_cert":"",
+    "app_stack": "app",
+    "identity": "",
+    "secret": ""
+}
+```
+
 ## Executing Script
 
 Must use the `-c` option the first time to pull down all the policy data. This will store the policy data locally in a file called `policy.json`
@@ -26,6 +39,7 @@ Must use the `-c` option the first time to pull down all the policy data. This w
 `
 python policy-missing-alert-rule.py -c 
 `
+
 
 
 ## License

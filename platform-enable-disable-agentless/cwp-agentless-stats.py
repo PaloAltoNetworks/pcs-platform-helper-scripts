@@ -21,10 +21,10 @@ pp = pprint.PrettyPrinter(indent=5)
 
 argParser = argparse.ArgumentParser()
 argParser.add_argument("-v", "--verbose", action='store_true', help="Print Verbose Messages")
-argParser.add_argument("-f", "--file", default="accounts.json", help="Define Cache File")
-argParser.add_argument("-c", "--cache", action='store_true', help="Cache Results")
-argParser.add_argument("-x", "--config", action='store', help="Authorization - Config File (~/.prismacloud)",required=True)
-argParser.add_argument("-r", "--hours", action='store',default=12, help="How many hours prior should we start the evaluation")
+argParser.add_argument("-f", "--file", default="accounts.json", help="Define Cache File - the file does not need to be created ahead of time")
+argParser.add_argument("-c", "--cache", action='store_true', help="Cache Results to the <--file>")
+argParser.add_argument("-x", "--config", action='store', help="Authorization - Config File In the following directory (~/.prismacloud)",required=True)
+argParser.add_argument("-r", "--hours", action='store',default=12, help="How many hours prior should we start the evaluation",required=False)
 
 
 args = argParser.parse_args()
