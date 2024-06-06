@@ -3,3 +3,5 @@ env
 .DS*
 *.pyc
 __pycache__
+
+platform-enable-disable-agentless/Notes
