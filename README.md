@@ -5,11 +5,12 @@ Some helper scripts for Prisma Cloud Platform
 
 ## Description
 
-Script to help find polices that are not attached to alert rules. If there is an alert rules that includes all policies then this script would not be effective. 
-
+A group of scripts used as helpers for various Prisma Cloud tasks both in CSPM and CWP. 
 
 
 ## Installation
+
+Create a python virtual environment, activate the environment and install the required packages
 
 ```
 python3 -m venv env
@@ -30,15 +31,23 @@ Create an authorization file in the directory `~/.prismacloud`  Below is the syn
 }
 ```
 
-## Executing Script
+`ca_cert` is needed to eliminate some warning messages while using global protect or other VPN services.  To create the ca_cert file you can user the following script: https://github.com/PaloAltoNetworks/prismacloud-api-python/blob/main/scripts/pcs_ssl_configure.py
 
-Must use the `-c` option the first time to pull down all the policy data. This will store the policy data locally in a file called `policy.json`
 
-`policy.json `is the default, but can be defined with the `-f` flag
+`app_stack` should match the stack you are connecting to `app,app2,app3,app4`
 
-`
-python policy-missing-alert-rule.py -c 
-`
+`identity` is the Prisma Cloud access key
+
+`secret` is the Prisma Cloud secret key
+
+## Executing Scripts
+
+Most of the scripts contain a `-h` option for identifying what is needed for each script, but in general here are some of the flags:
+
+ * `-h` for help
+ * `-x` to specify the name of the authentication file in the `~/.prismacloud` directory. For example `-x credentials.json`. The path is hard-coded so just specify the file name.
+ * `-c` most of the scripts will build a local cache file and this option will trigger that action. On subsequent calls of the script the `-c` options may not be needed, as the data you are acting on is stored locally. 
+ * `-f` will identify the cache file.  Most scripts have a default file, but this option will give you the flexibility to change the file name. 
 
 
 
