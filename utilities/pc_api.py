@@ -42,13 +42,17 @@ def pc_request(**kwargs):
     if kwargs["method"] == "post":
         payload = kwargs["payload"]
 
-        
-
         headers.pop('Accept')
 
-        print("Headers",headers)
-
         response = requests.post(kwargs["url"], headers=headers,verify=ca_cert,json=payload)
+    
+    if kwargs["method"] == "delete":
+        response = requests.delete(kwargs["url"], headers=headers,verify=ca_cert)
 
     return response
+
+
+
+
+
 
