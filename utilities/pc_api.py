@@ -39,5 +39,16 @@ def pc_request(**kwargs):
         response = requests.put(kwargs["url"], headers=headers,verify=ca_cert,json=payload)
 
 
+    if kwargs["method"] == "post":
+        payload = kwargs["payload"]
+
+        
+
+        headers.pop('Accept')
+
+        print("Headers",headers)
+
+        response = requests.post(kwargs["url"], headers=headers,verify=ca_cert,json=payload)
+
     return response
 
